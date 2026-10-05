@@ -11,7 +11,7 @@ async def main():
         {
             "messages": [
                 HumanMessage(
-                    content="Hello, how are you?"
+                    content="What is the payment gateway troubleshooting procedure?"
                 )
             ],
             "user_id": "user001",

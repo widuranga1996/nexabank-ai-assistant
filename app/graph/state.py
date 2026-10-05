@@ -20,5 +20,7 @@ class AgentState(TypedDict):
     citations: list
     security_flags: list
 
+    activity_log: list
+    
     current_node: str
     final_answer: str

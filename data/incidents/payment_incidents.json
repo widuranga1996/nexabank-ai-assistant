@@ -1,0 +1,42 @@
+[
+  {
+    "id": "INC-2025-001",
+    "title": "Payment Gateway Timeout",
+    "document_type": "incident",
+    "department": "payments",
+    "access_level": "internal",
+    "created_date": "2025-02-14",
+    "root_cause": "Gateway timeout configuration",
+    "content": "Payment transactions failed because the payment gateway timeout was configured too aggressively at 10 seconds. During periods of increased gateway latency, requests timed out before the gateway completed processing."
+  },
+  {
+    "id": "INC-2025-004",
+    "title": "Payment Database Connection Pool Exhaustion",
+    "document_type": "incident",
+    "department": "payments",
+    "access_level": "internal",
+    "created_date": "2025-04-22",
+    "root_cause": "Database connection pool exhaustion",
+    "content": "Payment transactions experienced failures when the database connection pool reached its maximum capacity. Long-running payment queries caused connections to remain occupied."
+  },
+  {
+    "id": "INC-2025-007",
+    "title": "Payment Gateway Latency",
+    "document_type": "incident",
+    "department": "payments",
+    "access_level": "internal",
+    "created_date": "2025-07-09",
+    "root_cause": "External gateway latency",
+    "content": "A significant increase in external payment gateway latency resulted in payment requests exceeding the configured timeout threshold."
+  },
+  {
+    "id": "INC-2025-011",
+    "title": "Payment Database Failure",
+    "document_type": "incident",
+    "department": "payments",
+    "access_level": "internal",
+    "created_date": "2025-09-18",
+    "root_cause": "Database connection pool exhaustion",
+    "content": "Payment processing degraded after database connections were exhausted by long-running transactions. New payment requests could not obtain database connections."
+  }
+]

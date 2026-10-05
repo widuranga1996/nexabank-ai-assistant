@@ -3,11 +3,11 @@ from langgraph.graph import StateGraph, START, END
 from app.graph.state import AgentState
 from app.graph.router import route_from_supervisor
 from app.agents.supervisor import supervisor_node
+from app.agents.retrieval import retrieval_node
 
-
-async def knowledge_retrieval_node(state: AgentState):
-    state["current_node"] = "knowledge_retrieval"
-    return state
+# async def knowledge_retrieval_node(state: AgentState):
+#     state["current_node"] = "knowledge_retrieval"
+#     return state
 
 
 async def research_node(state: AgentState):
@@ -24,6 +24,17 @@ async def direct_response_node(state: AgentState):
     state["current_node"] = "direct_response"
     return state
 
+async def response_node(state: AgentState):
+
+    state["current_node"] = "response"
+
+    evidence = state.get("evidence", [])
+
+    state["final_answer"] = (
+        f"Retrieved {len(evidence)} supporting documents."
+    )
+
+    return state
 
 def build_graph():
 
@@ -37,7 +48,7 @@ def build_graph():
 
     graph.add_node(
         "knowledge_retrieval",
-        knowledge_retrieval_node,
+        retrieval_node,
     )
 
     graph.add_node(
@@ -54,6 +65,11 @@ def build_graph():
         "direct_response",
         direct_response_node,
     )
+
+    graph.add_node(
+        "response",
+        response_node,
+    )    
 
     # START → Supervisor
     graph.add_edge(
@@ -74,8 +90,17 @@ def build_graph():
     )
 
     # Specialized agents → END
+    # graph.add_edge(
+    #     "knowledge_retrieval",
+    #     END,
+    # )
     graph.add_edge(
         "knowledge_retrieval",
+        "response",
+    )
+
+    graph.add_edge(
+        "response",
         END,
     )
 

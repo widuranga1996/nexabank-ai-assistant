@@ -1,0 +1,20 @@
+[
+  {
+    "id": "RUN-PAY-001",
+    "title": "Payment Gateway Troubleshooting",
+    "document_type": "runbook",
+    "department": "payments",
+    "access_level": "internal",
+    "created_date": "2025-01-10",
+    "content": "When payment gateway latency increases, verify gateway response times, timeout configuration, retry behaviour and circuit breaker status. Avoid increasing retries without checking downstream gateway health."
+  },
+  {
+    "id": "RUN-PAY-002",
+    "title": "Payment Database Troubleshooting",
+    "document_type": "runbook",
+    "department": "payments",
+    "access_level": "internal",
+    "created_date": "2025-01-15",
+    "content": "When payment database connections are exhausted, inspect connection pool usage, long-running queries and transaction duration. Identify connections that remain active longer than expected."
+  }
+]
