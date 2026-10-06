@@ -1,19 +1,34 @@
-from pydantic_settings import BaseSettings
+import os
+
+from dotenv import load_dotenv
 
 
-class Settings(BaseSettings):
-    openai_api_key: str
-    pinecone_api_key: str
-    pinecone_index_name: str = "nexabank-knowledge"
-
-    langchain_api_key: str | None = None
-    langchain_tracing_v2: bool = True
-    langchain_project: str = "nexabank-ai-assistant"
-
-    app_env: str = "development"
-
-    class Config:
-        env_file = ".env"
+load_dotenv()
 
 
-settings = Settings()
+OPENAI_API_KEY = os.getenv(
+    "OPENAI_API_KEY"
+)
+
+PINECONE_API_KEY = os.getenv(
+    "PINECONE_API_KEY"
+)
+
+PINECONE_INDEX_NAME = os.getenv(
+    "PINECONE_INDEX_NAME",
+    "nexabank-knowledge",
+)
+
+LANGCHAIN_API_KEY = os.getenv(
+    "LANGCHAIN_API_KEY"
+)
+
+LANGCHAIN_TRACING_V2 = os.getenv(
+    "LANGCHAIN_TRACING_V2",
+    "true",
+)
+
+LANGCHAIN_PROJECT = os.getenv(
+    "LANGCHAIN_PROJECT",
+    "nexabank-ai-assistant",
+)

@@ -30,3 +30,10 @@ def route_from_supervisor(state: AgentState) -> Intent:
         return "knowledge_retrieval"
 
     return intent
+
+def route_after_security(state: AgentState) -> str:
+
+    if state.get("security_flags"):
+        return "blocked"
+
+    return "allowed"

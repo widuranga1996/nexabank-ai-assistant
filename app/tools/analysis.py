@@ -1,15 +1,50 @@
-async def analyze_incidents(incidents):
+from collections import Counter
 
-    root_causes = {}
+
+def analyze_incident_batch(incidents: list[dict]) -> dict:
+    """
+    Deterministic analysis of a batch of incident records.
+
+    The LLM identifies and organizes the research problem,
+    while Python performs reliable aggregation.
+    """
+
+    root_causes = Counter()
 
     for incident in incidents:
-        cause = incident["root_cause"]
+        cause = incident.get("root_cause")
 
-        root_causes[cause] = (
-            root_causes.get(cause, 0) + 1
-        )
+        if cause:
+            root_causes[cause] += 1
 
     return {
-        "total_incidents": len(incidents),
-        "root_causes": root_causes,
+        "incident_count": len(incidents),
+        "root_causes": dict(root_causes),
+    }
+
+
+def aggregate_batch_results(results: list[dict]) -> dict:
+    """
+    Aggregate results produced by recursive batch analysis.
+    """
+
+    total_incidents = 0
+    root_causes = Counter()
+
+    for result in results:
+        total_incidents += result.get(
+            "incident_count",
+            0,
+        )
+
+        for cause, count in result.get(
+            "root_causes",
+            {},
+        ).items():
+
+            root_causes[cause] += count
+
+    return {
+        "total_incidents": total_incidents,
+        "root_causes": dict(root_causes),
     }

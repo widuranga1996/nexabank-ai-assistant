@@ -1,48 +1,32 @@
 from langgraph.graph import StateGraph, START, END
 
 from app.graph.state import AgentState
-from app.graph.router import route_from_supervisor
+from app.graph.router import (
+    route_from_supervisor,
+    route_after_security,
+)
+
+from app.agents.security import security_node
 from app.agents.supervisor import supervisor_node
 from app.agents.retrieval import retrieval_node
+from app.agents.research import research_node
 from app.agents.response import response_node
 from app.agents.validator import validation_node
 
-# async def knowledge_retrieval_node(state: AgentState):
-#     state["current_node"] = "knowledge_retrieval"
-#     return state
-
-
-async def research_node(state: AgentState):
-    state["current_node"] = "research"
-    return state
-
-
-async def analytics_node(state: AgentState):
-    state["current_node"] = "analytics"
-    return state
-
-
-async def direct_response_node(state: AgentState):
-    state["current_node"] = "direct_response"
-    return state
-
-# async def response_node(state: AgentState):
-
-#     state["current_node"] = "response"
-
-#     evidence = state.get("evidence", [])
-
-#     state["final_answer"] = (
-#         f"Retrieved {len(evidence)} supporting documents."
-#     )
-
-#     return state
 
 def build_graph():
 
     graph = StateGraph(AgentState)
 
+    # ==========================================
     # Nodes
+    # ==========================================
+
+    graph.add_node(
+        "security",
+        security_node,
+    )
+
     graph.add_node(
         "supervisor",
         supervisor_node,
@@ -59,16 +43,6 @@ def build_graph():
     )
 
     graph.add_node(
-        "analytics",
-        analytics_node,
-    )
-
-    graph.add_node(
-        "direct_response",
-        direct_response_node,
-    )
-
-    graph.add_node(
         "response",
         response_node,
     )
@@ -76,60 +50,77 @@ def build_graph():
     graph.add_node(
         "validator",
         validation_node,
-    )    
-
-    # START → Supervisor
-    graph.add_edge(
-        START,
-        "supervisor",
     )
 
-    # Supervisor → Router → Specialized Agent
+    # ==========================================
+    # START → Security
+    # ==========================================
+
+    graph.add_edge(
+        START,
+        "security",
+    )
+
+    # ==========================================
+    # Security → Supervisor / END
+    # ==========================================
+
+    graph.add_conditional_edges(
+        "security",
+        route_after_security,
+        {
+            "allowed": "supervisor",
+            "blocked": END,
+        },
+    )
+
+    # ==========================================
+    # Supervisor → Specialized Agent
+    # ==========================================
+
     graph.add_conditional_edges(
         "supervisor",
         route_from_supervisor,
         {
             "knowledge_retrieval": "knowledge_retrieval",
             "research": "research",
-            "analytics": "analytics",
-            "direct_response": "direct_response",
+
+            # Temporary routes
+            "analytics": "research",
+            "direct_response": "response",
         },
     )
 
-    # Specialized agents → END
-    # graph.add_edge(
-    #     "knowledge_retrieval",
-    #     END,
-    # )
+    # ==========================================
+    # Retrieval → Response
+    # ==========================================
+
     graph.add_edge(
         "knowledge_retrieval",
         "response",
     )
 
-    graph.add_edge(
-        "response",
-        END,
-    )
+    # ==========================================
+    # Research → Response
+    # ==========================================
 
     graph.add_edge(
         "research",
-        END,
+        "response",
     )
 
-    graph.add_edge(
-        "analytics",
-        END,
-    )
-
-    graph.add_edge(
-        "direct_response",
-        END,
-    )
+    # ==========================================
+    # Response → Validator
+    # ==========================================
 
     graph.add_edge(
         "response",
         "validator",
     )
+
+    # ==========================================
+    # Validator → END
+    # ==========================================
 
     graph.add_edge(
         "validator",
